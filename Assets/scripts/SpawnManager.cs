@@ -1,29 +1,36 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class SpawnManager : MonoBehaviour
 {
-    public GameObject prefab;
-    public float startDelay = 2f;
-    public float repeatRate = 2f;
-    private PlayerController PlayerControllerScript;
+    public GameObject[] obstaclePrefab;
 
-    void Start()
+    private float startDelay = 2f;
+    private float repeatRate = 2f;
+
+    private PlayerController playerControllerScript;
+
+    private void Start()
     {
+        playerControllerScript = FindObjectOfType<PlayerController>();
+
         InvokeRepeating("SpawnObstacle", startDelay, repeatRate);
-        PlayerControllerScript = FindObjectOfType<PlayerController>();
+    }
+
+    private void Update()
+    {
+        if (playerControllerScript.gameOver)
+        {
+            CancelInvoke("SpawnObstacle");
+        }
     }
 
     private void SpawnObstacle()
     {
-        Instantiate(prefab, transform.position, prefab.transform.rotation);
-    }
-    private void Update()
-    {
-        if(PlayerControllerScript.gameOver == true)
-        {
-            CancelInvoke("SpawnObstacle");
-        }
+        int RandomIndx = Random.Range(0, obstaclePrefab.Length);
+        Instantiate(obstaclePrefab[RandomIndx], transform.position,obstaclePrefab[RandomIndx].transform.rotation);
     }
 }
